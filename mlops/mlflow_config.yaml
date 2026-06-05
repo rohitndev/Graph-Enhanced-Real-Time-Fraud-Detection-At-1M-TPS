@@ -1,0 +1,33 @@
+# MLflow configuration — experiment tracking + model registry
+# Used to version every training run and manage champion/challenger models.
+
+tracking_uri: ${MLFLOW_TRACKING_URI:-file:./mlops/mlruns}
+experiment_name: graph-enhanced-fraud-detection
+
+registry:
+  model_name: fraud-ensemble
+  stages:
+    champion: Production
+    challenger: Staging
+  # Auto-rollback guardrail: if the challenger's precision drops below this
+  # delta versus the champion, promotion is blocked.
+  precision_guardrail: 0.02
+
+logged_metrics:
+  - auc_tabular
+  - auc_graph
+  - auc_uplift
+  - detection_rate
+  - false_positive_rate
+
+logged_params:
+  - n_estimators
+  - max_depth
+  - learning_rate
+  - high_risk_threshold
+  - graph_window_minutes
+
+artifacts:
+  - feature_importance
+  - metadata.json
+  - fraud_ensemble.json

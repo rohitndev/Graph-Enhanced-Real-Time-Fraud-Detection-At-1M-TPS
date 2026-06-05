@@ -1,0 +1,16 @@
+# Copy to `terraform.tfvars` and fill in. Never commit the real file.
+
+aws_region          = "us-east-1"
+app_name            = "fraud-detection"
+app_environment     = "dev"
+
+# S3 bucket name must be globally unique.
+s3_bucket_name      = "my-org-fraud-detection-lake"
+
+kinesis_stream_name = "fraud-alerts"
+kinesis_shard_count = 1
+
+# Set to true and provide networking to provision MSK Serverless (Kafka).
+enable_msk             = false
+msk_subnet_ids         = []
+msk_security_group_ids = []

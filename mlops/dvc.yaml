@@ -1,0 +1,22 @@
+# DVC pipeline — reproducible data + model stages.
+# Run with: dvc repro (requires the optional `dvc` package).
+
+stages:
+  generate_data:
+    cmd: python -m data.generate_data --rows 50000 --out data/transactions.parquet
+    deps:
+      - data/generate_data.py
+    outs:
+      - data/transactions.parquet
+
+  train:
+    cmd: python main.py
+    deps:
+      - data/transactions.parquet
+      - src/models/train.py
+      - src/graph/graph_features.py
+    outs:
+      - src/models/artifacts/fraud_ensemble.json
+    metrics:
+      - src/models/artifacts/metadata.json:
+          cache: false

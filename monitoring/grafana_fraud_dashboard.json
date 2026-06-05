@@ -1,0 +1,72 @@
+{
+  "title": "Real-Time Fraud Detection",
+  "description": "Live fraud rate, false-positive trend, ring detection and stream health.",
+  "schemaVersion": 39,
+  "tags": ["fraud", "pyspark", "streaming"],
+  "timezone": "browser",
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Transaction Throughput (TPS)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [{ "expr": "rate(transactions_scored_total[1m])" }]
+    },
+    {
+      "id": 2,
+      "title": "Fraud Rate by Channel",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum by (channel) (rate(fraud_flagged_total[5m]))" }]
+    },
+    {
+      "id": 3,
+      "title": "False-Positive Rate",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percentunit", "thresholds": {
+        "steps": [
+          { "color": "green", "value": null },
+          { "color": "orange", "value": 0.1 },
+          { "color": "red", "value": 0.2 }
+        ] } } },
+      "targets": [{ "expr": "fraud_false_positive_rate" }]
+    },
+    {
+      "id": 4,
+      "title": "Detection Rate",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percentunit" } },
+      "targets": [{ "expr": "fraud_detection_rate" }]
+    },
+    {
+      "id": 5,
+      "title": "Fraud Rings Detected (per window)",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 8 },
+      "targets": [{ "expr": "fraud_rings_detected" }]
+    },
+    {
+      "id": 6,
+      "title": "Streaming Watermark Lag (s)",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 14 },
+      "targets": [{ "expr": "spark_streaming_watermark_lag_seconds" }]
+    },
+    {
+      "id": 7,
+      "title": "Model Score PSI (drift)",
+      "type": "gauge",
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 14 },
+      "fieldConfig": { "defaults": { "max": 0.5, "thresholds": {
+        "steps": [
+          { "color": "green", "value": null },
+          { "color": "orange", "value": 0.1 },
+          { "color": "red", "value": 0.2 }
+        ] } } },
+      "targets": [{ "expr": "fraud_score_psi" }]
+    }
+  ]
+}

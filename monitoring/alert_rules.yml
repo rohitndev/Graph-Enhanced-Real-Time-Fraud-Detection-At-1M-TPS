@@ -1,0 +1,45 @@
+# Prometheus / Grafana alerting rules for the fraud pipeline.
+# Routed to PagerDuty (paging) and Slack (notification).
+
+groups:
+  - name: fraud-pipeline-alerts
+    rules:
+      - alert: HighFalsePositiveRate
+        expr: fraud_false_positive_rate > 0.15
+        for: 10m
+        labels:
+          severity: warning
+          route: slack
+        annotations:
+          summary: "False-positive rate above 15% for 10m"
+          description: "Legitimate customers are being blocked — review thresholds."
+
+      - alert: ModelScoreDrift
+        expr: fraud_score_psi > 0.2
+        for: 15m
+        labels:
+          severity: critical
+          route: pagerduty
+        annotations:
+          summary: "Model score PSI above 0.2 (significant drift)"
+          description: "Trigger the retraining DAG; champion model may be stale."
+
+      - alert: StreamingLagHigh
+        expr: spark_streaming_watermark_lag_seconds > 120
+        for: 5m
+        labels:
+          severity: critical
+          route: pagerduty
+        annotations:
+          summary: "Structured Streaming watermark lag > 2 minutes"
+          description: "The scoring pipeline is falling behind the transaction stream."
+
+      - alert: FraudRingSpike
+        expr: increase(fraud_rings_detected[1h]) > 25
+        for: 0m
+        labels:
+          severity: warning
+          route: slack
+        annotations:
+          summary: "Unusual spike in detected fraud rings"
+          description: "Possible coordinated attack — notify the investigations team."

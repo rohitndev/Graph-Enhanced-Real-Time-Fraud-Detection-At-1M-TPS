@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f output/*)",
+      "Bash(rm -f src/models/artifacts/*)",
+      "Bash(mkdir -p docs)",
+      "Bash(echo \".gitkeep created\")"
+    ]
+  }
+}
